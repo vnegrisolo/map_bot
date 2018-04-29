@@ -7,3 +7,4 @@ app-test:
 	mix format
 	mix credo
 	mix test --trace
+	mix dialyzer

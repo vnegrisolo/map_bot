@@ -21,7 +21,8 @@ defmodule MapBot.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:credo, "~> 0.9.2"}
+      {:credo, "~> 0.9.2"},
+      {:dialyxir, "~> 0.5.1"}
     ]
   end
 end
