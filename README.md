@@ -17,8 +17,11 @@ MapBot.build(MapBot.Car, color: :yellow)
 MapBot.build(MapBot.Car, %{color: :yellow})
 # => %MapBot.Car{model: "SUV", color: :yellow}
 
-MapBot.build(MapBot.Car, :greenish, model: "Sport")
+MapBot.build(MapBot.Car, [:greenish, model: "Sport"])
 # => %MapBot.Car{model: "Sport", color: :green}
+
+MapBot.build(MapBot.Car, [:with_code])
+# => %MapBot.Car{model: "SUV", color: :black, code: "CODE-123"}
 ```
 
 ## Development
@@ -41,3 +44,26 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/map_bot](https://hexdocs.pm/map_bot).
+
+If you want to use the `sequence` feature you'll need to start:
+
+```elixir
+MapBot.start_link()
+```
+
+Then start creating your factories definition such as:
+
+```elixir
+defmodule MapBot.DummyFactory do
+  def new(:greenish), do: %{color: :green}
+  def new(:tomato), do: %{name: "Tomato", color: :red}
+  def new(MapBot.Car), do: %MapBot.Car{model: "SUV", color: :black}
+  def new(:with_code), do: %{code: &"CODE-#{&1}"}
+end
+```
+
+And configure your `MapBot` to use that factories definition:
+
+```elixir
+config :map_bot, factories: MapBot.DummyFactory
+```
