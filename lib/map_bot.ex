@@ -1,18 +1,23 @@
 defmodule MapBot do
   @moduledoc """
-  Documentation for MapBot.
+  `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
   """
 
   @doc """
-  Hello world.
+  Builds an Elixir Map/Struct.
 
   ## Examples
 
-      iex> MapBot.hello
-      :world
+      iex> MapBot.build(:tomato)
+      %{name: "Tomato", color: :red}
 
   """
-  def hello do
-    :world
+  @spec build(atom()) :: map()
+  def build(name) do
+    factories().new(name)
+  end
+
+  defp factories() do
+    Application.get_env(:map_bot, :factories)
   end
 end

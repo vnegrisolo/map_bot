@@ -4,5 +4,6 @@ app-setup:
 
 app-test:
 	make app-setup
+	mix format
 	mix credo
 	mix test --trace
