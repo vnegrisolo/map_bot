@@ -48,7 +48,7 @@ be found at [https://hexdocs.pm/map_bot](https://hexdocs.pm/map_bot).
 If you want to use the `sequence` feature you'll need to start:
 
 ```elixir
-MapBot.start_link()
+MapBot.Sequence.start_link()
 ```
 
 Then start creating your factories definition such as:

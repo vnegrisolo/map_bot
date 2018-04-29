@@ -1,2 +1,2 @@
 ExUnit.start()
-MapBot.start_link()
+MapBot.Sequence.start_link()
