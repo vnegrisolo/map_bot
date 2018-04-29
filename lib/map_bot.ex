@@ -1,6 +1,29 @@
 defmodule MapBot do
   @moduledoc """
   `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
+
+  ## Factories Definition:
+
+  Factories are defined in a single module such as:
+
+  ```elixir
+  defmodule MyApp.Factory do
+    def new(:greenish), do: %{color: :green}
+    def new(:tomato), do: %{name: "Tomato", color: :red}
+    def new(MapBot.Car), do: %MapBot.Car{model: "SUV", color: :black}
+    def new(:with_code), do: %{code: &"CODE-\#{&1}"}
+  end
+  ```
+
+  ## Configuration:
+
+  Then configure `:map_bot` to use that factories definition:
+
+  ```elixir
+  config :map_bot, factories: MyApp.Factory
+  ```
+
+  And now you can start using the `MapBot.build/2` function.
   """
 
   @type name :: module() | atom()

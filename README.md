@@ -2,6 +2,29 @@
 
 `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
 
+## Factories Definition:
+
+Factories are defined in a single module such as:
+
+```elixir
+defmodule MyApp.Factory do
+  def new(:greenish), do: %{color: :green}
+  def new(:tomato), do: %{name: "Tomato", color: :red}
+  def new(MapBot.Car), do: %MapBot.Car{model: "SUV", color: :black}
+  def new(:with_code), do: %{code: &"CODE-#{&1}"}
+end
+```
+
+## Configuration:
+
+Then configure `:map_bot` to use that factories definition:
+
+```elixir
+config :map_bot, factories: MyApp.Factory
+```
+
+And now you can start using the `MapBot.build/2` function.
+
 ## Usage Examples:
 
 ```elixir
@@ -24,14 +47,11 @@ MapBot.build(MapBot.Car, [:with_code])
 # => %MapBot.Car{model: "SUV", color: :black, code: "CODE-123"}
 ```
 
-## Development
-
-Check out the `Makefile` for useful development tasks.
-
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `map_bot` to your list of dependencies in `mix.exs`:
+Check out `map_bot` dependency version on [map_bot hex](https://hex.pm/packages/map_bot).
+
+Change your `mix.exs` to add `map_bot` with the correct version:
 
 ```elixir
 def deps do
@@ -41,23 +61,10 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/map_bot](https://hexdocs.pm/map_bot).
+## Documentation
 
-Then start creating your factories definition such as:
+The `MapBot` documentation are [available here](https://hexdocs.pm/map_bot/api-reference.html).
 
-```elixir
-defmodule MapBot.DummyFactory do
-  def new(:greenish), do: %{color: :green}
-  def new(:tomato), do: %{name: "Tomato", color: :red}
-  def new(MapBot.Car), do: %MapBot.Car{model: "SUV", color: :black}
-  def new(:with_code), do: %{code: &"CODE-#{&1}"}
-end
-```
+## Development
 
-And configure your `MapBot` to use that factories definition:
-
-```elixir
-config :map_bot, factories: MapBot.DummyFactory
-```
+Check out the `Makefile` for useful development tasks.

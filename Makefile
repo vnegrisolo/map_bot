@@ -6,6 +6,6 @@ app-setup:
 
 app-test: app-setup
 	mix format
-	mix credo
+	MIX_ENV=test mix credo
 	mix test --trace
-	mix dialyzer
+	MIX_ENV=test mix dialyzer

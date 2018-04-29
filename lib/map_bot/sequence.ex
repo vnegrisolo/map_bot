@@ -1,7 +1,5 @@
 defmodule MapBot.Sequence do
-  @moduledoc """
-  A simple GenServer to store sequence state.
-  """
+  @moduledoc false
 
   use GenServer
 
