@@ -5,8 +5,20 @@
 ## Usage Examples:
 
 ```elixir
-MapBot.build(App.User, name: "Johnny")
-# => %App.User{name: "Johnny", age: 35, email: "foo@mail.com"}
+MapBot.build(:tomato)
+# => %{name: "Tomato", color: :red}
+
+MapBot.build(:tomato, color: :green)
+# => %{name: "Tomato", color: :green}
+
+MapBot.build(MapBot.Car, color: :yellow)
+# => %MapBot.Car{model: "SUV", color: :yellow}
+
+MapBot.build(MapBot.Car, %{color: :yellow})
+# => %MapBot.Car{model: "SUV", color: :yellow}
+
+MapBot.build(MapBot.Car, :greenish, model: "Sport")
+# => %MapBot.Car{model: "Sport", color: :green}
 ```
 
 ## Development

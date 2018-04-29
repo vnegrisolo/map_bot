@@ -23,6 +23,9 @@ defmodule MapBot do
 
       iex> MapBot.build(MapBot.Car, %{color: :yellow})
       %MapBot.Car{model: "SUV", color: :yellow}
+
+      iex> MapBot.build(MapBot.Car, [:greenish, model: "Sport"])
+      %MapBot.Car{model: "Sport", color: :green}
   """
   @spec build(name, attributes) :: result
   def build(name, attrs \\ []) do
@@ -31,8 +34,7 @@ defmodule MapBot do
   end
 
   defp apply_attr({key, value}, map), do: Map.put(map, key, value)
+  defp apply_attr(name, map), do: Map.merge(map, factories().new(name))
 
-  defp factories() do
-    Application.get_env(:map_bot, :factories)
-  end
+  defp factories(), do: Application.get_env(:map_bot, :factories)
 end
