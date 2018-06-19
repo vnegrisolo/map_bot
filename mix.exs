@@ -11,7 +11,7 @@ defmodule MapBot.MixProject do
       deps: deps(),
       source_url: "https://github.com/vnegrisolo/map_bot",
       name: "MapBot",
-      docs: [main: "MapBot", extras: ~w(README.md)]
+      docs: [main: "readme", extras: ~w(README.md)]
     ]
   end
 
