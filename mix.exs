@@ -9,7 +9,9 @@ defmodule MapBot.MixProject do
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      source_url: "https://github.com/vnegrisolo/map_bot"
+      source_url: "https://github.com/vnegrisolo/map_bot",
+      name: "MapBot",
+      docs: [main: "MapBot", extras: ~w(README.md)]
     ]
   end
 
