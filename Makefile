@@ -9,3 +9,6 @@ app-test: app-setup
 	MIX_ENV=test mix credo
 	mix test --trace
 	MIX_ENV=test mix dialyzer
+
+app-deploy: app-test
+	./bin/deploy

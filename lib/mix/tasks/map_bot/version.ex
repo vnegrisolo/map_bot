@@ -1,4 +1,6 @@
 defmodule Mix.Tasks.MapBot.Version do
+  @moduledoc false
+
   use Mix.Task
 
   @shortdoc "MapBot version"
