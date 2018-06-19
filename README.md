@@ -70,7 +70,7 @@ Change your `mix.exs` to add `map_bot` with the correct version:
 ```elixir
 def deps do
   [
-    {:map_bot, "~> 0.1.0"}
+    {:map_bot, "~> 0.1.1"}
   ]
 end
 ```
