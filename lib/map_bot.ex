@@ -50,5 +50,5 @@ defmodule MapBot do
 
   defp apply_sequence({_key, _value}, map), do: map
 
-  defp factories(), do: Application.get_env(:map_bot, :factories)
+  defp factories(), do: Application.fetch_env!(:map_bot, :factories)
 end
