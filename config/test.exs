@@ -1,14 +1,14 @@
 use Mix.Config
 
-defmodule MapBot.Car do
+defmodule MapBot.Test.Car do
   defstruct model: nil, color: nil, code: nil
 end
 
-defmodule MapBot.DummyFactory do
+defmodule MapBot.Test.Factory do
   def new(:greenish), do: %{color: :green}
   def new(:tomato), do: %{name: "Tomato", color: :red}
-  def new(MapBot.Car), do: %MapBot.Car{model: "SUV", color: :black}
+  def new(MapBot.Test.Car), do: %MapBot.Test.Car{model: "SUV", color: :black}
   def new(:with_code), do: %{code: &"CODE-#{&1}"}
 end
 
-config :map_bot, factories: MapBot.DummyFactory
+config :map_bot, factories: MapBot.Test.Factory
