@@ -12,5 +12,34 @@ defmodule MapBotTest do
 
       assert Integer.parse(sequence) > 0
     end
+
+    test "builds :tomato" do
+      assert MapBot.build(:tomato) == %{name: "Tomato", color: :red}
+    end
+
+    test "builds :tomato, color: :green" do
+      assert MapBot.build(:tomato, color: :green) == %{name: "Tomato", color: :green}
+    end
+
+    test "builds YourApp.Car, color: :yellow" do
+      assert MapBot.build(YourApp.Car, color: :yellow) == %YourApp.Car{
+               model: "SUV",
+               color: :yellow
+             }
+    end
+
+    test "builds YourApp.Car, %{color: :yellow}" do
+      assert MapBot.build(YourApp.Car, %{color: :yellow}) == %YourApp.Car{
+               model: "SUV",
+               color: :yellow
+             }
+    end
+
+    test "builds YourApp.Car, [:greenish, model: \"Sport\"]" do
+      assert MapBot.build(YourApp.Car, [:greenish, model: "Sport"]) == %YourApp.Car{
+               model: "Sport",
+               color: :green
+             }
+    end
   end
 end
