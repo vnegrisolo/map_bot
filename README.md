@@ -9,7 +9,9 @@ Note that this library is very flexible and also very light. It does not add any
 Factories are defined in a single module in your application such as:
 
 ```elixir
-defmodule MyApp.Factory do
+defmodule YourApp.Factory do
+  use MapBot
+
   def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
   def new(:greenish), do: %{color: :green}
   def new(:tomato), do: %{name: "Cherry Tomato", color: :red}
@@ -17,14 +19,14 @@ defmodule MyApp.Factory do
 end
 ```
 
-This module simply defines by function definition pattern match how you map is going to be built. If we call `MapBot.build/2` the first argument is used for pattern match with your factory definition and the second is a list of attributes that will override the built map.
+This module simply defines by function definition pattern match how you map is going to be built. If we call `YourApp.Factory.build/2` the first argument is used for pattern match with your factory definition and the second is a list of attributes that will override the built map.
 
 ### Sequences:
 
 In order to prevent not unique errors by database constraints and to have a more flexible data you can use a sequence inside your factory definition. To do that use a function with arity 1 and the first argument of that function will be a auto incremented integer.
 
 ```elixir
-defmodule MyApp.Factory do
+defmodule YourApp.Factory do
   def new(:with_code), do: %{code: &"CODE-#{&1}"}
 end
 ```
@@ -32,9 +34,9 @@ end
 will produce:
 
 ```elixir
-MapBot.build(:with_code) # %{code: "CODE-1"}
-MapBot.build(:with_code) # %{code: "CODE-2"}
-MapBot.build(:with_code) # %{code: "CODE-3"}
+YourApp.Factory.build(:with_code) # %{code: "CODE-1"}
+YourApp.Factory.build(:with_code) # %{code: "CODE-2"}
+YourApp.Factory.build(:with_code) # %{code: "CODE-3"}
 ```
 
 Note that this `&"CODE-#{&1}"` is a very short Elixir syntax equivalent for:
@@ -51,7 +53,7 @@ Note that if you want to compose multiple definitions to your map you can use a 
 In `MapBot` a trait is just passing another factory definition as the second argument for `MapBot.build/2`.
 
 ```elixir
-MapBot.build(YourApp.Car, [:greenish, model: "Sport"])
+YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
 # => %YourApp.Car{model: "Sport", color: :green}
 ```
 
@@ -75,36 +77,25 @@ def deps do
 end
 ```
 
-## Configuration:
-
-To configure `:map_bot` to use that factories definition:
-
-```elixir
-# config/config.exs
-config :map_bot, factories: MyApp.Factory
-```
-
-And now you can start using the `MapBot.build/2` function.
-
 ## Examples:
 
 ```elixir
-MapBot.build(:tomato)
+YourApp.Factory.build(:tomato)
 # => %{name: "Tomato", color: :red}
 
-MapBot.build(:tomato, color: :green)
+YourApp.Factory.build(:tomato, color: :green)
 # => %{name: "Tomato", color: :green}
 
-MapBot.build(YourApp.Car, color: :yellow)
+YourApp.Factory.build(YourApp.Car, color: :yellow)
 # => %YourApp.Car{model: "SUV", color: :yellow}
 
-MapBot.build(YourApp.Car, %{color: :yellow})
+YourApp.Factory.build(YourApp.Car, %{color: :yellow})
 # => %YourApp.Car{model: "SUV", color: :yellow}
 
-MapBot.build(YourApp.Car, [:greenish, model: "Sport"])
+YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
 # => %YourApp.Car{model: "Sport", color: :green}
 
-MapBot.build(YourApp.Car, [:with_code])
+YourApp.Factory.build(YourApp.Car, [:with_code])
 # => %YourApp.Car{model: "SUV", color: :black, code: "CODE-123"}
 ```
 
