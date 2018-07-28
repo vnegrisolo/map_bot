@@ -7,14 +7,16 @@ defmodule MapBot do
   For building your own maps and structs take a look on the `MapBot.build/2` function.
   """
 
+  @type name :: module() | atom()
+  @type attributes :: map() | keyword()
+  @type result :: struct() | map()
+
   defmacro __using__(_opts) do
     quote do
-      @type name :: module() | atom()
-      @type attributes :: map() | keyword()
-      @type result :: struct() | map()
+      @behaviour MapBot.Factory
 
       @doc "Builds an Elixir Map/Struct."
-      @spec build(name, attributes) :: result
+      @spec build(MapBot.name(), MapBot.attributes()) :: MapBot.result()
       def build(name, attrs \\ [])
       def build(name, %{} = attrs), do: build(name, Map.to_list(attrs))
 

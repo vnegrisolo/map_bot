@@ -1,5 +1,5 @@
 defmodule MapBotTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest MapBot
 
   defmodule YourApp.Car do
@@ -9,6 +9,7 @@ defmodule MapBotTest do
   defmodule YourApp.Factory do
     use MapBot
 
+    @impl MapBot.Factory
     def new(:greenish), do: %{color: :green}
     def new(:tomato), do: %{name: "Tomato", color: :red}
     def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
