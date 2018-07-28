@@ -22,14 +22,14 @@ defmodule MapBot do
       iex> MapBot.build(:tomato, color: :green)
       %{name: "Tomato", color: :green}
 
-      iex> MapBot.build(MapBot.Test.Car, color: :yellow)
-      %MapBot.Test.Car{model: "SUV", color: :yellow}
+      iex> MapBot.build(YourApp.Car, color: :yellow)
+      %YourApp.Car{model: "SUV", color: :yellow}
 
-      iex> MapBot.build(MapBot.Test.Car, %{color: :yellow})
-      %MapBot.Test.Car{model: "SUV", color: :yellow}
+      iex> MapBot.build(YourApp.Car, %{color: :yellow})
+      %YourApp.Car{model: "SUV", color: :yellow}
 
-      iex> MapBot.build(MapBot.Test.Car, [:greenish, model: "Sport"])
-      %MapBot.Test.Car{model: "Sport", color: :green}
+      iex> MapBot.build(YourApp.Car, [:greenish, model: "Sport"])
+      %YourApp.Car{model: "Sport", color: :green}
   """
   @spec build(name, attributes) :: result
   def build(name, attrs \\ [])

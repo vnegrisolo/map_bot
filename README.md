@@ -10,7 +10,7 @@ Factories are defined in a single module in your application such as:
 
 ```elixir
 defmodule MyApp.Factory do
-  def new(MapBot.Test.Car), do: %MapBot.Test.Car{model: "SUV", color: :black}
+  def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
   def new(:greenish), do: %{color: :green}
   def new(:tomato), do: %{name: "Cherry Tomato", color: :red}
   def new(:with_code), do: %{code: &"CODE-#{&1}"}
@@ -51,13 +51,13 @@ Note that if you want to compose multiple definitions to your map you can use a 
 In `MapBot` a trait is just passing another factory definition as the second argument for `MapBot.build/2`.
 
 ```elixir
-MapBot.build(MapBot.Test.Car, [:greenish, model: "Sport"])
-# => %MapBot.Test.Car{model: "Sport", color: :green}
+MapBot.build(YourApp.Car, [:greenish, model: "Sport"])
+# => %YourApp.Car{model: "Sport", color: :green}
 ```
 
 In the previous example we are:
 
-1. building a map based on **MapBot.Test.Car** factory definition;
+1. building a map based on **YourApp.Car** factory definition;
 2. then merge the result with the factory defition for **:greenish**;
 3. finally merge the result again with `[model: "Sport"]`
 
@@ -95,17 +95,17 @@ MapBot.build(:tomato)
 MapBot.build(:tomato, color: :green)
 # => %{name: "Tomato", color: :green}
 
-MapBot.build(MapBot.Test.Car, color: :yellow)
-# => %MapBot.Test.Car{model: "SUV", color: :yellow}
+MapBot.build(YourApp.Car, color: :yellow)
+# => %YourApp.Car{model: "SUV", color: :yellow}
 
-MapBot.build(MapBot.Test.Car, %{color: :yellow})
-# => %MapBot.Test.Car{model: "SUV", color: :yellow}
+MapBot.build(YourApp.Car, %{color: :yellow})
+# => %YourApp.Car{model: "SUV", color: :yellow}
 
-MapBot.build(MapBot.Test.Car, [:greenish, model: "Sport"])
-# => %MapBot.Test.Car{model: "Sport", color: :green}
+MapBot.build(YourApp.Car, [:greenish, model: "Sport"])
+# => %YourApp.Car{model: "Sport", color: :green}
 
-MapBot.build(MapBot.Test.Car, [:with_code])
-# => %MapBot.Test.Car{model: "SUV", color: :black, code: "CODE-123"}
+MapBot.build(YourApp.Car, [:with_code])
+# => %YourApp.Car{model: "SUV", color: :black, code: "CODE-123"}
 ```
 
 ## Documentation

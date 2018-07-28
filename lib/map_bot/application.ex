@@ -4,7 +4,8 @@ defmodule MapBot.Application do
   use Application
 
   def start(_type, _args) do
-    [{MapBot.Sequence, 1}]
-    |> Supervisor.start_link(strategy: :one_for_one, name: MapBot.Supervisor)
+    children = [{MapBot.Sequence, 1}]
+    opts = [strategy: :one_for_one, name: MapBot.Supervisor]
+    Supervisor.start_link(children, opts)
   end
 end

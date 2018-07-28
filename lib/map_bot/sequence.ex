@@ -11,5 +11,5 @@ defmodule MapBot.Sequence do
   def next_int(), do: GenServer.call(__MODULE__, :next_int)
 
   @impl true
-  def handle_call(:next_int, _from, next), do: {:reply, next, next + 1}
+  def handle_call(:next_int, _from, num), do: {:reply, num, num + 1}
 end
