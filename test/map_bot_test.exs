@@ -57,7 +57,7 @@ defmodule MapBotTest do
 
       assert Integer.parse(sequence) > 0
       assert Integer.parse(reference) > 0
-      assert sequence != reference
+      assert sequence == reference
     end
   end
 end

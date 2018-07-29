@@ -21,19 +21,21 @@ defmodule MapBot do
       def build(name, %{} = attrs), do: build(name, Map.to_list(attrs))
 
       def build(name, attrs) do
-        map = Enum.reduce([name | attrs], %{}, &apply_attr/2)
-        Enum.reduce(Map.to_list(map), map, &apply_sequence/2)
+        [name | attrs]
+        |> Enum.reduce(%{}, &apply_attr/2)
+        |> apply_sequence()
       end
 
       defp apply_attr({key, value}, map), do: Map.put(map, key, value)
       defp apply_attr(name, map), do: Map.merge(map, new(name))
 
-      defp apply_sequence({key, func}, map) when is_function(func) do
-        value = func.(MapBot.Sequence.next_int())
-        apply_attr({key, value}, map)
+      defp apply_sequence(map) do
+        next_int = MapBot.Sequence.next_int()
+        map |> Map.to_list() |> Enum.reduce(map, &sequence(&1, &2, next_int))
       end
 
-      defp apply_sequence({_key, _value}, map), do: map
+      defp sequence({_key, val}, map, _i) when not is_function(val), do: map
+      defp sequence({key, func}, map, i), do: Map.put(map, key, func.(i))
     end
   end
 end
