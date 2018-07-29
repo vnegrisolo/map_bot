@@ -2,58 +2,62 @@ defmodule MapBotTest do
   use ExUnit.Case, async: true
   doctest MapBot
 
-  defmodule YourApp.Car do
-    defstruct model: nil, color: nil, code: nil
+  defmodule YourApp do
+    defmodule Car do
+      defstruct model: nil, color: nil, code: nil, reference: nil
+    end
+
+    defmodule Factory do
+      use MapBot
+
+      @impl MapBot.Factory
+      def new(:greenish), do: %{color: :green}
+      def new(:tomato), do: %{name: "Tomato", color: :red}
+      def new(Car), do: %Car{model: "SUV", color: :black}
+      def new(:with_code_and_ref), do: %{code: &"CODE-#{&1}", reference: &"REF-#{&1}"}
+    end
   end
 
-  defmodule YourApp.Factory do
-    use MapBot
-
-    @impl MapBot.Factory
-    def new(:greenish), do: %{color: :green}
-    def new(:tomato), do: %{name: "Tomato", color: :red}
-    def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
-    def new(:with_code), do: %{code: &"CODE-#{&1}"}
-  end
+  alias YourApp.Factory
+  alias YourApp.Car
 
   describe "build/2" do
-    test "a sequence in a struct" do
-      assert %YourApp.Car{
-               model: "SUV",
-               color: :black,
-               code: "CODE-" <> sequence
-             } = YourApp.Factory.build(YourApp.Car, [:with_code])
-
-      assert Integer.parse(sequence) > 0
+    test "builds a map with fixed values" do
+      assert Factory.build(:tomato) == %{name: "Tomato", color: :red}
     end
 
-    test "builds :tomato" do
-      assert YourApp.Factory.build(:tomato) == %{name: "Tomato", color: :red}
+    test "builds a struct with fixed values" do
+      assert Factory.build(Car) == %Car{model: "SUV", color: :black}
     end
 
-    test "builds :tomato, color: :green" do
-      assert YourApp.Factory.build(:tomato, color: :green) == %{name: "Tomato", color: :green}
+    test "builds a map with dynamic values" do
+      assert Factory.build(:tomato, color: :green) == %{name: "Tomato", color: :green}
+      assert Factory.build(:tomato, %{color: :green}) == %{name: "Tomato", color: :green}
     end
 
-    test "builds YourApp.Car, color: :yellow" do
-      assert YourApp.Factory.build(YourApp.Car, color: :yellow) == %YourApp.Car{
-               model: "SUV",
-               color: :yellow
-             }
+    test "builds a struct with dynamic values" do
+      assert Factory.build(Car, color: :yellow) == %Car{model: "SUV", color: :yellow}
+      assert Factory.build(Car, %{color: :yellow}) == %Car{model: "SUV", color: :yellow}
     end
 
-    test "builds YourApp.Car, %{color: :yellow}" do
-      assert YourApp.Factory.build(YourApp.Car, %{color: :yellow}) == %YourApp.Car{
-               model: "SUV",
-               color: :yellow
-             }
-    end
-
-    test "builds YourApp.Car, [:greenish, model: \"Sport\"]" do
-      assert YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"]) == %YourApp.Car{
+    test "builds a struct with dynamic traits and values" do
+      assert Factory.build(Car, [:greenish, model: "Sport"]) == %Car{
                model: "Sport",
                color: :green
              }
+    end
+
+    test "builds a struct with dynamic sequence values" do
+      assert %Car{
+               model: "SUV",
+               color: :black,
+               code: "CODE-" <> sequence,
+               reference: "REF-" <> reference
+             } = Factory.build(Car, [:with_code_and_ref])
+
+      assert Integer.parse(sequence) > 0
+      assert Integer.parse(reference) > 0
+      assert sequence != reference
     end
   end
 end
