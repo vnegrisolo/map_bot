@@ -4,7 +4,7 @@ defmodule MapBot.MixProject do
   def project do
     [
       app: :map_bot,
-      version: "0.1.1",
+      version: "1.0.0",
       package: package(),
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
