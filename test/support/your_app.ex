@@ -19,13 +19,13 @@ defmodule YourApp do
 
     use MapBot
 
-    @impl MapBot.Factory
+    @impl MapBot
     def new(:greenish), do: %{color: :green}
     def new(:tomato), do: %{name: "Tomato", color: :red}
     def new(Car), do: %Car{model: "SUV", color: :black}
     def new(:with_code_and_ref), do: %{code: &"CODE-#{&1}", reference: &"REF-#{&1}"}
 
-    @impl MapBot.Factory
+    @impl MapBot
     def repo(), do: Repo
   end
 end

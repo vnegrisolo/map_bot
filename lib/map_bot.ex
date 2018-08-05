@@ -13,9 +13,12 @@ defmodule MapBot do
   @type result :: struct() | map()
   @type repo :: module()
 
+  @callback new(name) :: result
+  @callback repo :: repo
+
   defmacro __using__(_opts) do
     quote do
-      @behaviour MapBot.Factory
+      @behaviour MapBot
 
       @doc "Creates an Elixir Map/Struct using Repo.insert/1"
       @spec create(MapBot.name(), MapBot.traits(), MapBot.attributes()) :: {:ok, MapBot.result()}
