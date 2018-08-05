@@ -1,8 +1,8 @@
 # MapBot
 
-`MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
+`MapBot` builds and creates Elixir Maps/Structs based on factory definitions and attributes.
 
-Note that this library is very flexible and also very light. It does not add any dependency in our application neither it requires third party code such `Ecto` or `Faker`. In addition to that to integrate your MapBot factories with any other library like `Ecto` or `Faker` it's also very easy as the factory definition remains if your application.
+Note that this library is very flexible and also very light. It does not add any dependency in your application. In other words it does not add any third party code such `Ecto` or `Faker` but it is so flexible that you can use them if you want to as factory definition remains if your application.
 
 ## Factories Definition:
 
@@ -12,14 +12,78 @@ Factories are defined in a single module in your application such as:
 defmodule YourApp.Factory do
   use MapBot
 
+  @impl MapBot
+  def repo(), do: Repo
+
+  @impl MapBot
   def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
   def new(:greenish), do: %{color: :green}
-  def new(:tomato), do: %{name: "Cherry Tomato", color: :red}
-  def new(:with_code), do: %{code: &"CODE-#{&1}"}
+  def new(:tomato), do: %{name: "Tomato", color: :red}
+  def new(:with_code_and_ref), do: %{code: &"CODE-#{&1}", reference: &"REF-#{&1}"}
 end
 ```
 
-This module simply defines by function definition pattern match how you map is going to be built. If we call `YourApp.Factory.build/2` the first argument is used for pattern match with your factory definition and the second is a list of attributes that will override the built map.
+This module `use MapBot` to define the functions `YourApp.Factory.build/3`, `YourApp.Factory.create/3` and `YourApp.Factory.create!/3`. These functions are simple delegations to `MapBot.build/4`, `MapBot.create/4` and `MapBot.create!/4`. It also requires you to define a `repo/0` function to return a module for `Repo.insert/1` and finally your own factory definitions by implementing the `new/1` function.
+
+## Examples:
+
+```elixir
+YourApp.Factory.build(:tomato)
+# => %{name: "Tomato", color: :red}
+
+YourApp.Factory.build(YourApp.Car)
+# => %YourApp.Car{model: "SUV", color: :black}
+
+YourApp.Factory.build(:tomato, color: :green)
+# => %{name: "Tomato", color: :green}
+
+YourApp.Factory.build(:tomato, %{color: :green})
+# => %{name: "Tomato", color: :green}
+
+YourApp.Factory.build(YourApp.Car, color: :yellow)
+# => %YourApp.Car{model: "SUV", color: :yellow}
+
+YourApp.Factory.build(YourApp.Car, %{color: :yellow})
+# => %YourApp.Car{model: "SUV", color: :yellow}
+
+YourApp.Factory.build(YourApp.Car, [:greenish])
+# => %YourApp.Car{model: "SUV", color: :green}
+
+YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
+# => %YourApp.Car{model: "Sport", color: :green}
+
+YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
+# => %YourApp.Car{model: "Sport", color: :green}
+
+YourApp.Factory.create(YourApp.Car, color: :yellow)
+# => {:ok, %YourApp.Car{id: "123", model: "SUV", color: :yellow}}
+
+YourApp.Factory.create!(YourApp.Car, color: :yellow)
+# => %YourApp.Car{id: "123", model: "SUV", color: :yellow}
+```
+
+### Traits:
+
+Note that if you want to compose multiple definitions to your map you can use a `trait`. This is a great feature that allows our factory definition to be very flexible.
+
+In `MapBot` a trait is just passing another factory definition as the second or third argument for `YourApp.Factory.build/3`. You may have noted by the examples above that there's no difference between the second and the third argument, but they were split in the function definitions for readability purposes.
+
+```elixir
+YourApp.Factory.build(YourApp.Car, [:greenish])
+# => %YourApp.Car{model: "SUV", color: :green}
+
+YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
+# => %YourApp.Car{model: "Sport", color: :green}
+
+YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
+# => %YourApp.Car{model: "Sport", color: :green}
+```
+
+In the previous example we are:
+
+1. building a map based on **YourApp.Car** factory definition;
+2. then merging the result with the factory defition for the **:greenish** atom;
+3. finally merging the result again with the attributes `[model: "Sport"]`
 
 ### Sequences:
 
@@ -46,23 +110,6 @@ fn i -> "CODE-#{i}" end
 # is the same as `&"CODE-#{&1}"`
 ```
 
-### Traits:
-
-Note that if you want to compose multiple definitions to your map you can use a `trait`. This is a great feature that allows our factory definition to be very flexible.
-
-In `MapBot` a trait is just passing another factory definition as the second argument for `MapBot.build/2`.
-
-```elixir
-YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
-# => %YourApp.Car{model: "Sport", color: :green}
-```
-
-In the previous example we are:
-
-1. building a map based on **YourApp.Car** factory definition;
-2. then merge the result with the factory defition for **:greenish**;
-3. finally merge the result again with `[model: "Sport"]`
-
 ## Installation
 
 Check out `map_bot` dependency version on [map_bot hex](https://hex.pm/packages/map_bot).
@@ -75,28 +122,6 @@ def deps do
     {:map_bot, "~> 0.1.1"}
   ]
 end
-```
-
-## Examples:
-
-```elixir
-YourApp.Factory.build(:tomato)
-# => %{name: "Tomato", color: :red}
-
-YourApp.Factory.build(:tomato, color: :green)
-# => %{name: "Tomato", color: :green}
-
-YourApp.Factory.build(YourApp.Car, color: :yellow)
-# => %YourApp.Car{model: "SUV", color: :yellow}
-
-YourApp.Factory.build(YourApp.Car, %{color: :yellow})
-# => %YourApp.Car{model: "SUV", color: :yellow}
-
-YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
-# => %YourApp.Car{model: "Sport", color: :green}
-
-YourApp.Factory.build(YourApp.Car, [:with_code])
-# => %YourApp.Car{model: "SUV", color: :black, code: "CODE-123"}
 ```
 
 ## Documentation
