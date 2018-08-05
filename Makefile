@@ -10,5 +10,8 @@ test: setup
 	mix test --trace
 	MIX_ENV=test mix dialyzer
 
+docs: setup
+	mix docs
+
 deploy: test
 	./bin/deploy
