@@ -29,7 +29,7 @@ defmodule MapBotTest do
   alias YourApp.Factory
   alias YourApp.Car
 
-  describe "build/2" do
+  describe "build/3" do
     test "builds a map with fixed values" do
       assert Factory.build(:tomato) == %{name: "Tomato", color: :red}
     end
@@ -50,6 +50,11 @@ defmodule MapBotTest do
 
     test "builds a struct with dynamic traits and values" do
       assert Factory.build(Car, [:greenish, model: "Sport"]) == %Car{
+               model: "Sport",
+               color: :green
+             }
+
+      assert Factory.build(Car, [:greenish], model: "Sport") == %Car{
                model: "Sport",
                color: :green
              }

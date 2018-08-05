@@ -8,6 +8,7 @@ defmodule MapBot do
   """
 
   @type name :: module() | atom()
+  @type traits :: map() | keyword()
   @type attributes :: map() | keyword()
   @type result :: struct() | map()
   @type repo :: module()
@@ -17,20 +18,25 @@ defmodule MapBot do
       @behaviour MapBot.Factory
 
       @doc "Creates an Elixir Map/Struct using Repo.insert/1"
-      @spec create(MapBot.name(), MapBot.attributes()) :: {:ok, MapBot.result()}
-      def create(name, attrs \\ []), do: name |> build(attrs) |> repo().insert()
+      @spec create(MapBot.name(), MapBot.traits(), MapBot.attributes()) :: {:ok, MapBot.result()}
+      def create(name, traits \\ [], attrs \\ []) do
+        name |> build(traits, attrs) |> repo().insert()
+      end
 
       @doc "Creates an Elixir Map/Struct using Repo.insert!/1"
-      @spec create(MapBot.name(), MapBot.attributes()) :: MapBot.result()
-      def create!(name, attrs \\ []), do: name |> build(attrs) |> repo().insert!()
+      @spec create!(MapBot.name(), MapBot.traits(), MapBot.attributes()) :: MapBot.result()
+      def create!(name, traits \\ [], attrs \\ []) do
+        name |> build(traits, attrs) |> repo().insert!()
+      end
 
       @doc "Builds an Elixir Map/Struct."
-      @spec build(MapBot.name(), MapBot.attributes()) :: MapBot.result()
-      def build(name, attrs \\ [])
-      def build(name, %{} = attrs), do: build(name, Map.to_list(attrs))
+      @spec build(MapBot.name(), MapBot.traits(), MapBot.attributes()) :: MapBot.result()
+      def build(name, traits \\ [], attrs \\ [])
+      def build(name, %{} = traits, attrs), do: build(name, Map.to_list(traits), attrs)
+      def build(name, traits, %{} = attrs), do: build(name, traits, Map.to_list(attrs))
 
-      def build(name, attrs) do
-        [name | attrs]
+      def build(name, traits, attrs) do
+        ([name] ++ traits ++ attrs)
         |> Enum.reduce(%{}, &apply_attr/2)
         |> apply_sequence()
       end
