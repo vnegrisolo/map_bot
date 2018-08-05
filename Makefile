@@ -1,14 +1,14 @@
-.PHONY: app-setup app-test
+.PHONY: setup test
 
-app-setup:
+setup:
 	mix deps.get
 	mix compile
 
-app-test: app-setup
+test: setup
 	mix format
 	MIX_ENV=test mix credo
 	mix test --trace
 	MIX_ENV=test mix dialyzer
 
-app-deploy: app-test
+deploy: test
 	./bin/deploy
