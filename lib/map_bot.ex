@@ -10,10 +10,19 @@ defmodule MapBot do
   @type name :: module() | atom()
   @type attributes :: map() | keyword()
   @type result :: struct() | map()
+  @type repo :: module()
 
   defmacro __using__(_opts) do
     quote do
       @behaviour MapBot.Factory
+
+      @doc "Creates an Elixir Map/Struct using Repo.insert/1"
+      @spec create(MapBot.name(), MapBot.attributes()) :: {:ok, MapBot.result()}
+      def create(name, attrs \\ []), do: name |> build(attrs) |> repo().insert()
+
+      @doc "Creates an Elixir Map/Struct using Repo.insert!/1"
+      @spec create(MapBot.name(), MapBot.attributes()) :: MapBot.result()
+      def create!(name, attrs \\ []), do: name |> build(attrs) |> repo().insert!()
 
       @doc "Builds an Elixir Map/Struct."
       @spec build(MapBot.name(), MapBot.attributes()) :: MapBot.result()
