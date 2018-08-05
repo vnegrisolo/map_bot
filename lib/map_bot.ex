@@ -17,19 +17,61 @@ defmodule MapBot do
   @callback new(name) :: result
   @callback repo :: repo
 
-  @doc "Creates an Elixir Map or Struct using your Repo.insert/1"
+  @doc """
+  Creates an Elixir Map or Struct using your Repo.insert/1
+
+  ## Examples
+
+      iex> YourApp.Factory.create(YourApp.Car, color: :yellow)
+      {:ok, %YourApp.Car{id: "123", model: "SUV", color: :yellow}}
+  """
   @spec create(factory, name, traits, attributes) :: {:ok, result}
   def create(factory, name, traits \\ [], attrs \\ []) do
     factory |> build(name, traits, attrs) |> factory.repo().insert()
   end
 
-  @doc "Creates an Elixir Map or Struct using your Repo.insert!/1"
+  @doc """
+  Creates an Elixir Map or Struct using your Repo.insert!/1
+
+  ## Examples
+
+      iex> YourApp.Factory.create!(YourApp.Car, color: :yellow)
+      %YourApp.Car{id: "123", model: "SUV", color: :yellow}
+  """
   @spec create!(factory, name, traits, attributes) :: result
   def create!(factory, name, traits \\ [], attrs \\ []) do
     factory |> build(name, traits, attrs) |> factory.repo().insert!()
   end
 
-  @doc "Builds an Elixir Map or Struct."
+  @doc """
+  Builds an Elixir Map or Struct.
+
+  ## Examples
+
+      iex> YourApp.Factory.build(:tomato)
+      %{name: "Tomato", color: :red}
+
+      iex> YourApp.Factory.build(YourApp.Car)
+      %YourApp.Car{model: "SUV", color: :black}
+
+      iex> YourApp.Factory.build(:tomato, color: :green)
+      %{name: "Tomato", color: :green}
+
+      iex> YourApp.Factory.build(:tomato, %{color: :green})
+      %{name: "Tomato", color: :green}
+
+      iex> YourApp.Factory.build(YourApp.Car, color: :yellow)
+      %YourApp.Car{model: "SUV", color: :yellow}
+
+      iex> YourApp.Factory.build(YourApp.Car, %{color: :yellow})
+      %YourApp.Car{model: "SUV", color: :yellow}
+
+      iex> YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
+      %YourApp.Car{model: "Sport", color: :green}
+
+      iex> YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
+      %YourApp.Car{model: "Sport", color: :green}
+  """
   @spec build(factory, name, traits, attributes) :: result
   def build(factory, name, traits \\ [], attrs \\ [])
 
