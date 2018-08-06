@@ -16,6 +16,10 @@ defmodule MapBot do
     def new(:tomato), do: %{name: "Tomato", color: :red}
     def new(:with_code_and_ref), do: %{code: &"CODE-\#{&1}", reference: &"REF-\#{&1}"}
   end
+
+  defmodule YourApp.Car do
+    defstruct id: nil, model: nil, color: nil, code: nil, reference: nil
+  end
   ```
 
   For building your own maps and structs take a look on the function `MapBot.build/4`.
@@ -34,17 +38,8 @@ defmodule MapBot do
 
   ## Examples
 
-      iex> YourApp.Factory.build(:tomato)
-      %{name: "Tomato", color: :red}
-
       iex> YourApp.Factory.build(YourApp.Car)
       %YourApp.Car{model: "SUV", color: :black}
-
-      iex> YourApp.Factory.build(:tomato, color: :green)
-      %{name: "Tomato", color: :green}
-
-      iex> YourApp.Factory.build(:tomato, %{color: :green})
-      %{name: "Tomato", color: :green}
 
       iex> YourApp.Factory.build(YourApp.Car, color: :yellow)
       %YourApp.Car{model: "SUV", color: :yellow}
@@ -58,28 +53,32 @@ defmodule MapBot do
       iex> YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
       %YourApp.Car{model: "Sport", color: :green}
 
-      iex> YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
+      iex> YourApp.Factory.build(YourApp.Car, [:greenish], %{model: "Sport"})
       %YourApp.Car{model: "Sport", color: :green}
+
+      iex> YourApp.Factory.build(:tomato)
+      %{name: "Tomato", color: :red}
+
+      iex> YourApp.Factory.build(:tomato, color: :green)
+      %{name: "Tomato", color: :green}
+
+      iex> YourApp.Factory.build(:tomato, %{color: :green})
+      %{name: "Tomato", color: :green}
   """
   @spec build(factory, name, traits, attributes) :: result
-  def build(factory, name, traits \\ [], attrs \\ [])
-
-  def build(factory, name, %{} = traits, attrs) do
-    build(factory, name, Map.to_list(traits), attrs)
-  end
-
-  def build(factory, name, traits, %{} = attrs) do
-    build(factory, name, traits, Map.to_list(attrs))
-  end
-
   def build(factory, name, traits, attrs) do
-    ([name] ++ traits ++ attrs)
-    |> Enum.reduce(%{}, &apply_attr(factory, &1, &2))
+    [name, traits, attrs]
+    |> Enum.flat_map(&to_list/1)
+    |> Enum.reduce(%{}, &apply_attr(&1, &2, factory))
     |> apply_sequence()
   end
 
-  defp apply_attr(_factory, {key, value}, map), do: Map.put(map, key, value)
-  defp apply_attr(factory, name, map), do: Map.merge(map, factory.new(name))
+  def to_list(val) when is_list(val), do: val
+  def to_list(val) when is_map(val), do: Map.to_list(val)
+  def to_list(val), do: [val]
+
+  defp apply_attr({key, value}, map, _factory), do: Map.put(map, key, value)
+  defp apply_attr(name, map, factory), do: Map.merge(map, factory.new(name))
 
   defp apply_sequence(map) do
     next_int = MapBot.Sequence.next_int()
@@ -93,6 +92,7 @@ defmodule MapBot do
     quote do
       @behaviour MapBot
 
+      @spec build(MapBot.name(), MapBot.traits(), MapBot.attributes()) :: MapBot.result()
       def build(name, traits \\ [], attrs \\ []) do
         MapBot.build(__MODULE__, name, traits, attrs)
       end

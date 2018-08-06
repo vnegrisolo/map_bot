@@ -25,17 +25,8 @@ This module `use MapBot` to define the function `YourApp.Factory.build/3`. This 
 ## Examples:
 
 ```elixir
-YourApp.Factory.build(:tomato)
-# => %{name: "Tomato", color: :red}
-
 YourApp.Factory.build(YourApp.Car)
 # => %YourApp.Car{model: "SUV", color: :black}
-
-YourApp.Factory.build(:tomato, color: :green)
-# => %{name: "Tomato", color: :green}
-
-YourApp.Factory.build(:tomato, %{color: :green})
-# => %{name: "Tomato", color: :green}
 
 YourApp.Factory.build(YourApp.Car, color: :yellow)
 # => %YourApp.Car{model: "SUV", color: :yellow}
@@ -49,8 +40,17 @@ YourApp.Factory.build(YourApp.Car, [:greenish])
 YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
 # => %YourApp.Car{model: "Sport", color: :green}
 
-YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
+YourApp.Factory.build(YourApp.Car, [:greenish], %{model: "Sport"})
 # => %YourApp.Car{model: "Sport", color: :green}
+
+YourApp.Factory.build(:tomato)
+# => %{name: "Tomato", color: :red}
+
+YourApp.Factory.build(:tomato, color: :green)
+# => %{name: "Tomato", color: :green}
+
+YourApp.Factory.build(:tomato, %{color: :green})
+# => %{name: "Tomato", color: :green}
 ```
 
 ### Traits:
