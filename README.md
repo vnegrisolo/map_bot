@@ -1,6 +1,6 @@
 # MapBot
 
-`MapBot` builds and creates Elixir Maps/Structs based on factory definitions and attributes.
+`MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
 
 Note that this library is very flexible and also very light. It does not add any dependency in your application. In other words it does not add any third party code such `Ecto` or `Faker` but it is so flexible that you can use them if you want to as factory definition remains if your application.
 
@@ -13,9 +13,6 @@ defmodule YourApp.Factory do
   use MapBot
 
   @impl MapBot
-  def repo(), do: Repo
-
-  @impl MapBot
   def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
   def new(:greenish), do: %{color: :green}
   def new(:tomato), do: %{name: "Tomato", color: :red}
@@ -23,7 +20,7 @@ defmodule YourApp.Factory do
 end
 ```
 
-This module `use MapBot` to define the functions `YourApp.Factory.build/3`, `YourApp.Factory.create/3` and `YourApp.Factory.create!/3`. These functions are simple delegations to `MapBot.build/4`, `MapBot.create/4` and `MapBot.create!/4`. It also requires you to define a `repo/0` function to return a module for `Repo.insert/1` and finally your own factory definitions by implementing the `new/1` function.
+This module `use MapBot` to define the function `YourApp.Factory.build/3`. This function is a simple delegation to `MapBot.build/4`. It also requires you to define your own factory definitions by implementing the `new/1` function.
 
 ## Examples:
 
@@ -54,12 +51,6 @@ YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
 
 YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
 # => %YourApp.Car{model: "Sport", color: :green}
-
-YourApp.Factory.create(YourApp.Car, color: :yellow)
-# => {:ok, %YourApp.Car{id: "123", model: "SUV", color: :yellow}}
-
-YourApp.Factory.create!(YourApp.Car, color: :yellow)
-# => %YourApp.Car{id: "123", model: "SUV", color: :yellow}
 ```
 
 ### Traits:

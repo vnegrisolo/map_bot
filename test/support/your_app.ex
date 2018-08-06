@@ -1,26 +1,14 @@
 defmodule YourApp do
   @moduledoc false
 
-  defmodule Repo do
-    @moduledoc false
-
-    def insert(map), do: {:ok, insert!(map)}
-    def insert!(map), do: Map.put(map, :id, "123")
-  end
-
   defmodule Car do
     @moduledoc false
-
     defstruct id: nil, model: nil, color: nil, code: nil, reference: nil
   end
 
   defmodule Factory do
     @moduledoc false
-
     use MapBot
-
-    @impl MapBot
-    def repo(), do: Repo
 
     @impl MapBot
     def new(Car), do: %Car{model: "SUV", color: :black}

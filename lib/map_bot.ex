@@ -1,6 +1,6 @@
 defmodule MapBot do
   @moduledoc """
-  `MapBot` builds and creates Elixir Maps/Structs based on factory definitions and attributes.
+  `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
 
   If you want to check how `MapBot` should be installed, configured and used please [check this out](https://hexdocs.pm/map_bot/).
 
@@ -11,9 +11,6 @@ defmodule MapBot do
     use MapBot
 
     @impl MapBot
-    def repo(), do: Repo
-
-    @impl MapBot
     def new(YouyApp.Car), do: %YouyApp.Car{model: "SUV", color: :black}
     def new(:greenish), do: %{color: :green}
     def new(:tomato), do: %{name: "Tomato", color: :red}
@@ -21,7 +18,7 @@ defmodule MapBot do
   end
   ```
 
-  For building your own maps and structs take a look on the functions `MapBot.build/4`, `MapBot.create/4` and `MapBot.create!/4`.
+  For building your own maps and structs take a look on the function `MapBot.build/4`.
   """
 
   @type factory :: module()
@@ -29,10 +26,8 @@ defmodule MapBot do
   @type traits :: map() | keyword()
   @type attributes :: map() | keyword()
   @type result :: struct() | map()
-  @type repo :: module()
 
   @callback new(name) :: result
-  @callback repo :: repo
 
   @doc """
   Builds an Elixir Map or Struct.
@@ -83,32 +78,6 @@ defmodule MapBot do
     |> apply_sequence()
   end
 
-  @doc """
-  Creates an Elixir Map or Struct using your Repo.insert/1
-
-  ## Examples
-
-      iex> YourApp.Factory.create(YourApp.Car, color: :yellow)
-      {:ok, %YourApp.Car{id: "123", model: "SUV", color: :yellow}}
-  """
-  @spec create(factory, name, traits, attributes) :: {:ok, result}
-  def create(factory, name, traits \\ [], attrs \\ []) do
-    factory |> build(name, traits, attrs) |> factory.repo().insert()
-  end
-
-  @doc """
-  Creates an Elixir Map or Struct using your Repo.insert!/1
-
-  ## Examples
-
-      iex> YourApp.Factory.create!(YourApp.Car, color: :yellow)
-      %YourApp.Car{id: "123", model: "SUV", color: :yellow}
-  """
-  @spec create!(factory, name, traits, attributes) :: result
-  def create!(factory, name, traits \\ [], attrs \\ []) do
-    factory |> build(name, traits, attrs) |> factory.repo().insert!()
-  end
-
   defp apply_attr(_factory, {key, value}, map), do: Map.put(map, key, value)
   defp apply_attr(factory, name, map), do: Map.merge(map, factory.new(name))
 
@@ -126,14 +95,6 @@ defmodule MapBot do
 
       def build(name, traits \\ [], attrs \\ []) do
         MapBot.build(__MODULE__, name, traits, attrs)
-      end
-
-      def create(name, traits \\ [], attrs \\ []) do
-        MapBot.create(__MODULE__, name, traits, attrs)
-      end
-
-      def create!(name, traits \\ [], attrs \\ []) do
-        MapBot.create!(__MODULE__, name, traits, attrs)
       end
     end
   end
