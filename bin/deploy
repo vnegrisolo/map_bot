@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 # set -o xtrace
 
-version=`mix map_bot.version`
+version=`mix run -e 'IO.puts(Mix.Project.config()[:version])'`
 echo "=> DID YOU UPDATE 'mix.exs' => version (${version})?"
 echo -n "=> Ready to deploy 🚀 (y/n)?"
 read -r answer
