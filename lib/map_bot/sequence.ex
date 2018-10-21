@@ -3,11 +3,15 @@ defmodule MapBot.Sequence do
 
   use GenServer
 
-  def start_link(state), do: GenServer.start_link(__MODULE__, state, name: __MODULE__)
+  @type state :: integer()
+
+  @spec start_link(state) :: {:ok, pid()}
+  def start_link(state \\ 1), do: GenServer.start_link(__MODULE__, state, name: __MODULE__)
 
   @impl true
   def init(state), do: {:ok, state}
 
+  @spec next_int() :: state
   def next_int(), do: GenServer.call(__MODULE__, :next_int)
 
   @impl true

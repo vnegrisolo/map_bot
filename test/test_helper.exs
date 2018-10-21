@@ -1,3 +1,4 @@
+{:ok, _pid} = MapBot.Sequence.start_link()
 ExUnit.start()
 
 {:ok, files} = File.ls("./test/support")

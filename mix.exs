@@ -17,9 +17,7 @@ defmodule MapBot.MixProject do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      mod: {MapBot.Application, []}
-    ]
+    []
   end
 
   # Run "mix help deps" to learn about dependencies.

@@ -115,6 +115,13 @@ def deps do
 end
 ```
 
+If you are going to use `MapBot.Sequence` please start the counter by adding into your `test/test_helper.exs` the following:
+
+```elixir
+# test/test_helper.exs
+{:ok, _pid} = MapBot.Sequence.start_link()
+```
+
 ## Documentation
 
 The `MapBot` documentation are [available here](https://hexdocs.pm/map_bot/).
