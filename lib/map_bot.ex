@@ -12,22 +12,20 @@ defmodule MapBot do
 
     @impl MapBot
     def new(YouyApp.Car), do: %YouyApp.Car{model: "SUV", color: :black}
-    def new(:greenish), do: %{color: :green}
     def new(:tomato), do: %{name: "Tomato", color: :red}
     def new(:with_code_and_ref), do: %{code: &"CODE-\#{&1}", reference: &"REF-\#{&1}"}
   end
 
   defmodule YourApp.Car do
-    defstruct id: nil, model: nil, color: nil, code: nil, reference: nil
+    defstruct id: nil, model: nil, color: nil
   end
   ```
 
-  For building your own maps and structs take a look on the function `MapBot.build/4`.
+  For building your own maps and structs take a look on the function `MapBot.build/3`.
   """
 
   @type factory :: module()
   @type name :: module() | atom()
-  @type traits :: map() | keyword()
   @type attributes :: map() | keyword()
   @type result :: struct() | map()
 
@@ -47,15 +45,6 @@ defmodule MapBot do
       iex> YourApp.Factory.build(YourApp.Car, %{color: :yellow})
       %YourApp.Car{model: "SUV", color: :yellow}
 
-      iex> YourApp.Factory.build(YourApp.Car, [:greenish])
-      %YourApp.Car{model: "SUV", color: :green}
-
-      iex> YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
-      %YourApp.Car{model: "Sport", color: :green}
-
-      iex> YourApp.Factory.build(YourApp.Car, [:greenish], %{model: "Sport"})
-      %YourApp.Car{model: "Sport", color: :green}
-
       iex> YourApp.Factory.build(:tomato)
       %{name: "Tomato", color: :red}
 
@@ -65,9 +54,9 @@ defmodule MapBot do
       iex> YourApp.Factory.build(:tomato, %{color: :green})
       %{name: "Tomato", color: :green}
   """
-  @spec build(factory, name, traits, attributes) :: result
-  def build(factory, name, traits, attrs) do
-    [name, traits, attrs]
+  @spec build(factory, name, attributes) :: result
+  def build(factory, name, attrs) do
+    [name, attrs]
     |> Enum.flat_map(&to_list/1)
     |> Enum.reduce(%{}, &apply_attr(&1, &2, factory))
     |> apply_sequence()
@@ -92,9 +81,9 @@ defmodule MapBot do
     quote do
       @behaviour MapBot
 
-      @spec build(MapBot.name(), MapBot.traits(), MapBot.attributes()) :: MapBot.result()
-      def build(name, traits \\ [], attrs \\ []) do
-        MapBot.build(__MODULE__, name, traits, attrs)
+      @spec build(MapBot.name(), MapBot.attributes()) :: MapBot.result()
+      def build(name, attrs \\ []) do
+        MapBot.build(__MODULE__, name, attrs)
       end
     end
   end

@@ -4,12 +4,10 @@ defmodule MapBotTest do
 
   describe "build/3" do
     test "builds a struct with dynamic sequence values" do
-      assert %YourApp.Car{
-               model: "SUV",
-               color: :black,
+      assert %{
                code: "CODE-" <> sequence,
                reference: "REF-" <> reference
-             } = YourApp.Factory.build(YourApp.Car, [:with_code_and_ref])
+             } = YourApp.Factory.build(:with_code_and_ref)
 
       assert Integer.parse(sequence) > 0
       assert Integer.parse(reference) > 0

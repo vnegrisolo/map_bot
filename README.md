@@ -14,13 +14,12 @@ defmodule YourApp.Factory do
 
   @impl MapBot
   def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
-  def new(:greenish), do: %{color: :green}
   def new(:tomato), do: %{name: "Tomato", color: :red}
   def new(:with_code_and_ref), do: %{code: &"CODE-#{&1}", reference: &"REF-#{&1}"}
 end
 ```
 
-This module `use MapBot` to define the function `YourApp.Factory.build/3`. This function is a simple delegation to `MapBot.build/4`. It also requires you to define your own factory definitions by implementing the `new/1` function.
+This module `use MapBot` to define the function `YourApp.Factory.build/2`. This function is a simple delegation to `MapBot.build/3`. It also requires you to define your own factory definitions by implementing the `new/1` function.
 
 ## Examples:
 
@@ -34,15 +33,6 @@ YourApp.Factory.build(YourApp.Car, color: :yellow)
 YourApp.Factory.build(YourApp.Car, %{color: :yellow})
 # => %YourApp.Car{model: "SUV", color: :yellow}
 
-YourApp.Factory.build(YourApp.Car, [:greenish])
-# => %YourApp.Car{model: "SUV", color: :green}
-
-YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
-# => %YourApp.Car{model: "Sport", color: :green}
-
-YourApp.Factory.build(YourApp.Car, [:greenish], %{model: "Sport"})
-# => %YourApp.Car{model: "Sport", color: :green}
-
 YourApp.Factory.build(:tomato)
 # => %{name: "Tomato", color: :red}
 
@@ -52,29 +42,6 @@ YourApp.Factory.build(:tomato, color: :green)
 YourApp.Factory.build(:tomato, %{color: :green})
 # => %{name: "Tomato", color: :green}
 ```
-
-### Traits:
-
-Note that if you want to compose multiple definitions to your map you can use a `trait`. This is a great feature that allows our factory definition to be very flexible.
-
-In `MapBot` a trait is just passing another factory definition as the second or third argument for `YourApp.Factory.build/3`. You may have noted by the examples above that there's no difference between the second and the third argument, but they were split in the function definitions for readability purposes.
-
-```elixir
-YourApp.Factory.build(YourApp.Car, [:greenish])
-# => %YourApp.Car{model: "SUV", color: :green}
-
-YourApp.Factory.build(YourApp.Car, [:greenish], model: "Sport")
-# => %YourApp.Car{model: "Sport", color: :green}
-
-YourApp.Factory.build(YourApp.Car, [:greenish, model: "Sport"])
-# => %YourApp.Car{model: "Sport", color: :green}
-```
-
-In the previous example we are:
-
-1. building a map based on **YourApp.Car** factory definition;
-2. then merging the result with the factory defition for the **:greenish** atom;
-3. finally merging the result again with the attributes `[model: "Sport"]`
 
 ### Sequences:
 
