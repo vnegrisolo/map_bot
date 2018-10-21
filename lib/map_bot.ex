@@ -57,14 +57,14 @@ defmodule MapBot do
   @spec build(factory, name, attributes) :: result
   def build(factory, name, attrs) do
     [name, attrs]
-    |> Enum.flat_map(&to_list/1)
+    |> Enum.flat_map(&listify/1)
     |> Enum.reduce(%{}, &apply_attr(&1, &2, factory))
     |> apply_sequence()
   end
 
-  def to_list(val) when is_list(val), do: val
-  def to_list(val) when is_map(val), do: Map.to_list(val)
-  def to_list(val), do: [val]
+  defp listify(val) when is_list(val), do: val
+  defp listify(val) when is_map(val), do: Map.to_list(val)
+  defp listify(val), do: [val]
 
   defp apply_attr({key, value}, map, _factory), do: Map.put(map, key, value)
   defp apply_attr(name, map, factory), do: Map.merge(map, factory.new(name))
