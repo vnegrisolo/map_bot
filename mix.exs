@@ -6,7 +6,7 @@ defmodule MapBot.MixProject do
       app: :map_bot,
       version: "1.1.0",
       package: package(),
-      elixir: "~> 1.7",
+      elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       source_url: "https://github.com/vnegrisolo/map_bot",
