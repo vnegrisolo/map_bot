@@ -53,6 +53,10 @@ defmodule MapBot do
 
       iex> YourApp.Factory.build(:tomato, %{color: :green})
       %{name: "Tomato", color: :green}
+
+      iex> MapBot.Sequence.reset(123)
+      iex> YourApp.Factory.build(:with_code_and_ref)
+      %{code: "CODE-123", reference: "REF-123"}
   """
   @spec build(factory, name, attributes) :: result
   def build(factory, name, attrs) do

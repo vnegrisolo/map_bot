@@ -14,6 +14,12 @@ defmodule MapBot.Sequence do
   @spec next_int() :: state
   def next_int(), do: GenServer.call(__MODULE__, :next_int)
 
+  @spec reset(state) :: :ok
+  def reset(state), do: GenServer.cast(__MODULE__, {:reset, state})
+
   @impl true
   def handle_call(:next_int, _from, num), do: {:reply, num, num + 1}
+
+  @impl true
+  def handle_cast({:reset, state}, old_state), do: {:noreply, state}
 end
