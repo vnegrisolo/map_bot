@@ -65,16 +65,8 @@ defmodule MapBot do
     name
     |> factory.new()
     |> Map.merge(attrs)
-    |> apply_sequence()
+    |> MapBot.Sequence.apply()
   end
-
-  defp apply_sequence(map) do
-    next_int = MapBot.Sequence.next_int()
-    map |> Map.to_list() |> Enum.reduce(map, &sequence(&1, &2, next_int))
-  end
-
-  defp sequence({_key, val}, map, _i) when not is_function(val), do: map
-  defp sequence({key, func}, map, i), do: Map.put(map, key, func.(i))
 
   defmacro __using__(_opts) do
     quote do
