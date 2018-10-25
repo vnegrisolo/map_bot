@@ -2,7 +2,7 @@
 
 set -o errexit
 set -o nounset
-# set -o xtrace
+set -o xtrace
 
 version=`mix run -e 'IO.puts(Mix.Project.config()[:version])'`
 echo "=> DID YOU UPDATE 'mix.exs' => version (${version})?"
