@@ -1,0 +1,27 @@
+version: 2
+_elixir_job_defaults: &elixir_job_defaults
+  steps:
+    - checkout
+    - run: mix local.hex --force
+    - run: mix deps.get
+    - run: mix compile
+    - run: mix format --check-equivalent
+    - run: MIX_ENV=test mix credo
+    - run: mix test --trace
+    - run: mix docs
+    - run: MIX_ENV=test mix dialyzer
+jobs:
+  build_lint_test_docs_elixir_1_7:
+    <<: *elixir_job_defaults
+    docker:
+      - image: circleci/elixir:1.7
+  build_lint_test_docs_elixir_1_8:
+    <<: *elixir_job_defaults
+    docker:
+      - image: circleci/elixir:1.8
+workflows:
+  version: 2
+  build_lint_test_docs:
+    jobs:
+      - build_lint_test_docs_elixir_1_7
+      - build_lint_test_docs_elixir_1_8

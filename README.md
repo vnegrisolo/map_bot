@@ -1,5 +1,7 @@
 # MapBot
 
+[![CircleCI](https://circleci.com/gh/vnegrisolo/map_bot.svg?style=svg)](https://circleci.com/gh/vnegrisolo/map_bot)
+
 `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
 
 Note that this library is very flexible and also very light. It does not add any dependency in your application. In other words it does not add any third party code such `Ecto` or `Faker` but it is so flexible that you can use them if you want to as factory definition remains if your application.
