@@ -70,11 +70,13 @@ fn i -> "CODE-#{i}" end
 # is the same as `&"CODE-#{&1}"`
 ```
 
+## Documentation
+
+There's much more use cases on the [hexdocs/map_bot documentation][hexdocs-map_bot].
+
 ## Installation
 
-Check out `map_bot` dependency version on [map_bot hex](https://hex.pm/packages/map_bot).
-
-Change your `mix.exs` to add `map_bot` with the correct version:
+Check out `map_bot` version on [hex.pm/map_bot][hex-pm-map_bot]. The package can be installed by adding `map_bot` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -91,10 +93,10 @@ If you are going to use `MapBot.Sequence` please start the counter by adding int
 {:ok, _pid} = MapBot.Sequence.start_link()
 ```
 
-## Documentation
-
-The `MapBot` documentation are [available here](https://hexdocs.pm/map_bot/).
-
 ## Development
 
 Check out the `Makefile` for useful development tasks.
+
+<!-- Links & Images -->
+[hex-pm-map_bot]: https://hex.pm/packages/map_bot 'MapBot on Hex'
+[hexdocs-map_bot]: https://hexdocs.pm/map_bot/ 'MapBot on HexDocs'

@@ -1,26 +1,27 @@
 defmodule MapBot.MixProject do
   use Mix.Project
 
+  @app :map_bot
+  @name "MapBot"
+
   def project do
     [
-      app: :map_bot,
-      version: "1.2.0",
-      package: package(),
-      elixir: "~> 1.4",
-      start_permanent: Mix.env() == :prod,
+      app: @app,
       deps: deps(),
-      source_url: "https://github.com/vnegrisolo/map_bot",
-      name: "MapBot",
-      docs: [main: "readme", extras: ~w(README.md)]
+      docs: [main: "readme", extras: ~w(README.md)],
+      elixir: "~> 1.7",
+      name: @name,
+      package: package(),
+      source_url: "https://github.com/vnegrisolo/#{@app}",
+      start_permanent: Mix.env() == :prod,
+      version: "1.2.1"
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     []
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:credo, "~> 1.0.4", only: :test},
@@ -32,13 +33,13 @@ defmodule MapBot.MixProject do
   defp package() do
     [
       description: """
-      `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
+      `#{@name}` builds Elixir Maps/Structs based on factory definitions and attributes.
       """,
       licenses: ~w(MIT),
-      maintainers: ["Vinicius Ferreira Negrisolo"],
       links: %{
-        github: "https://github.com/vnegrisolo/map_bot"
-      }
+        github: "https://github.com/vnegrisolo/#{@app}"
+      },
+      maintainers: ["Vinicius Ferreira Negrisolo"]
     ]
   end
 end

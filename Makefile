@@ -23,6 +23,7 @@ outdated: ## Shows outdated packages.
 
 setup: ## Setup the App.
 	mix deps.get
+	mix deps.unlock --unused
 	mix compile
 
 test: ## Run the test suite.
