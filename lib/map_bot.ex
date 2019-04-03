@@ -2,26 +2,37 @@ defmodule MapBot do
   @moduledoc """
   `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
 
-  If you want to check how `MapBot` should be installed, configured and used please [check this out](https://hexdocs.pm/map_bot/).
+  Let's see how to use this library by examples:
 
-  In summary you should create your own Factory module such as this:
+  ## Examples setup:
 
   ```elixir
-  defmodule YourApp.Factory do
-    use MapBot
-
-    @impl MapBot
-    def new(YouyApp.Car), do: %YouyApp.Car{model: "SUV", color: :black}
-    def new(:tomato), do: %{name: "Tomato", color: :red}
-    def new(:with_code_and_ref), do: %{code: &"CODE-\#{&1}", reference: &"REF-\#{&1}"}
-  end
-
-  defmodule YourApp.Car do
-    defstruct id: nil, model: nil, color: nil
-  end
+  #{File.read!("test/support/my_app.ex")}
   ```
 
-  For building your own maps and structs take a look on the function `MapBot.build/3`.
+  ## Examples
+
+  ### `attrs/2`:
+
+      iex> MapBot.Sequence.reset(5)
+      iex> :rand.seed(:exsplus, {1, 2, 3})
+      ...>
+      iex> MyApp.Factory.attrs(MyApp.Car)
+      %{id: 5, model: "Truck", color: :green}
+      ...>
+      iex> MyApp.Factory.attrs(:tomato)
+      %{name: "Tomato-6", color: :green}
+
+  ### `build/2`:
+
+      iex> MapBot.Sequence.reset(5)
+      iex> :rand.seed(:exsplus, {1, 2, 3})
+      ...>
+      iex> MyApp.Factory.build(MyApp.Car)
+      %MyApp.Car{id: 5, model: "Truck", color: :green}
+      ...>
+      iex> MyApp.Factory.build(:tomato)
+      %{name: "Tomato-6", color: :green}
   """
 
   @type factory :: module()
@@ -75,6 +86,14 @@ defmodule MapBot do
       @spec build(MapBot.name(), MapBot.attributes()) :: MapBot.result()
       def build(name, attrs \\ []) do
         MapBot.build(__MODULE__, name, attrs)
+      end
+
+      @spec attrs(MapBot.name(), MapBot.attributes()) :: map()
+      def attrs(name, attrs \\ []) do
+        case build(name, attrs) do
+          %_{} = struct -> Map.from_struct(struct)
+          map -> map
+        end
       end
     end
   end
