@@ -3,20 +3,24 @@ defmodule MyApp do
 
   defmodule Car do
     @moduledoc false
-    defstruct id: nil,
-              color: nil,
-              model: nil
+    defstruct id: nil, color: nil, model: nil
+  end
+
+  defmodule Repo do
+    @moduledoc false
+    def insert(schema), do: {:ok, schema}
+    def insert!(schema), do: schema
   end
 
   defmodule Factory do
     @moduledoc false
-    use MapBot
+    use MapBot, repo: Repo
 
     @impl MapBot
     def new(Car) do
       %Car{
         id: & &1,
-        color: ~w(red white black blue green)a |> Enum.random(),
+        color: color(),
         model: ~w(Truck SUV Hatch) |> Enum.random()
       }
     end
@@ -24,8 +28,10 @@ defmodule MyApp do
     def new(:tomato) do
       %{
         name: &"Tomato-#{&1}",
-        color: ~w(red green yellow)a |> Enum.random()
+        color: color()
       }
     end
+
+    defp color(), do: ~w(red white black blue green)a |> Enum.random()
   end
 end

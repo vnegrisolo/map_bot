@@ -21,7 +21,7 @@ defmodule MapBot do
       %{id: 5, model: "Truck", color: :green}
       ...>
       iex> MyApp.Factory.attrs(:tomato)
-      %{name: "Tomato-6", color: :green}
+      %{name: "Tomato-6", color: :blue}
 
   ### `build/2`:
 
@@ -32,7 +32,23 @@ defmodule MapBot do
       %MyApp.Car{id: 5, model: "Truck", color: :green}
       ...>
       iex> MyApp.Factory.build(:tomato)
-      %{name: "Tomato-6", color: :green}
+      %{name: "Tomato-6", color: :blue}
+
+  ### `insert/2`:
+
+      iex> MapBot.Sequence.reset(5)
+      iex> :rand.seed(:exsplus, {1, 2, 3})
+      ...>
+      iex> MyApp.Factory.insert(MyApp.Car)
+      {:ok, %MyApp.Car{id: 5, model: "Truck", color: :green}}
+
+  ### `insert!/2`:
+
+      iex> MapBot.Sequence.reset(5)
+      iex> :rand.seed(:exsplus, {1, 2, 3})
+      ...>
+      iex> MyApp.Factory.insert!(MyApp.Car)
+      %MyApp.Car{id: 5, model: "Truck", color: :green}
   """
 
   @type factory :: module()
@@ -79,9 +95,23 @@ defmodule MapBot do
     |> MapBot.Sequence.apply()
   end
 
-  defmacro __using__(_opts) do
+  defmacro __using__(opts) do
     quote do
       @behaviour MapBot
+
+      @repo Keyword.get(unquote(opts), :repo)
+
+      if @repo do
+        @spec insert(MapBot.name(), MapBot.attributes()) :: {:ok, MapBot.result()}
+        def insert(name, attrs \\ []) do
+          name |> build(attrs) |> @repo.insert()
+        end
+
+        @spec insert!(MapBot.name(), MapBot.attributes()) :: MapBot.result()
+        def insert!(name, attrs \\ []) do
+          name |> build(attrs) |> @repo.insert!()
+        end
+      end
 
       @spec build(MapBot.name(), MapBot.attributes()) :: MapBot.result()
       def build(name, attrs \\ []) do
