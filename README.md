@@ -11,63 +11,100 @@ Note that this library is very flexible and also very light. It does not add any
 Factories are defined in a single module in your application such as:
 
 ```elixir
-defmodule YourApp.Factory do
-  use MapBot
+defmodule MyApp.Factory do
+  @moduledoc false
+  use MapBot, repo: MyApp.Repo, changeset: true
 
   @impl MapBot
-  def new(YourApp.Car), do: %YourApp.Car{model: "SUV", color: :black}
-  def new(:tomato), do: %{name: "Tomato", color: :red}
-  def new(:with_code_and_ref), do: %{code: &"CODE-#{&1}", reference: &"REF-#{&1}"}
+  def new(MyApp.Car) do
+    %MyApp.Car{
+      id: & &1,
+      color: color(),
+      model: ~w(Truck SUV Hatch) |> Enum.random()
+    }
+  end
+
+  def new(:tomato) do
+    %{
+      name: &"Tomato-#{&1}",
+      color: color()
+    }
+  end
+
+  defp color(), do: ~w(red white black blue green)a |> Enum.random()
 end
 ```
 
-This module `use MapBot` to define the function `YourApp.Factory.build/2`. This function is a simple delegation to `MapBot.build/3`. It also requires you to define your own factory definitions by implementing the `new/1` function.
+## Examples
 
-## Examples:
+### `attrs/2`:
 
 ```elixir
-YourApp.Factory.build(YourApp.Car)
-# => %YourApp.Car{model: "SUV", color: :black}
+iex> MyApp.Factory.attrs(MyApp.Car)
+%{id: 5, model: "Truck", color: :green}
 
-YourApp.Factory.build(YourApp.Car, color: :yellow)
-# => %YourApp.Car{model: "SUV", color: :yellow}
+iex> MyApp.Factory.attrs(MyApp.Car, color: :yellow)
+%{id: 6, model: "Hatch", color: :yellow}
 
-YourApp.Factory.build(YourApp.Car, %{color: :yellow})
-# => %YourApp.Car{model: "SUV", color: :yellow}
+iex> MyApp.Factory.attrs(MyApp.Car, %{color: :purple})
+%{id: 7, model: "Hatch", color: :purple}
 
-YourApp.Factory.build(:tomato)
-# => %{name: "Tomato", color: :red}
+iex> MyApp.Factory.attrs(:tomato)
+%{name: "Tomato-8", color: :blue}
 
-YourApp.Factory.build(:tomato, color: :green)
-# => %{name: "Tomato", color: :green}
+iex> MyApp.Factory.attrs(:tomato, color: :white)
+%{name: "Tomato-9", color: :white}
 
-YourApp.Factory.build(:tomato, %{color: :green})
-# => %{name: "Tomato", color: :green}
+iex> MyApp.Factory.attrs(:tomato, %{color: :pink})
+%{name: "Tomato-10", color: :pink}
 ```
 
-### Sequences:
-
-In order to prevent not unique errors by database constraints and to have a more flexible data you can use a sequence inside your factory definition. To do that use a function with arity 1 and the first argument of that function will be a auto incremented integer.
+### `build/2`:
 
 ```elixir
-defmodule YourApp.Factory do
-  def new(:with_code), do: %{code: &"CODE-#{&1}"}
-end
+iex> MyApp.Factory.build(MyApp.Car)
+%MyApp.Car{id: 5, model: "Truck", color: :green}
+
+iex> MyApp.Factory.build(MyApp.Car, color: :yellow)
+%MyApp.Car{id: 6, model: "Hatch", color: :yellow}
+
+iex> MyApp.Factory.build(MyApp.Car, %{color: :purple})
+%MyApp.Car{id: 7, model: "Hatch", color: :purple}
+
+iex> MyApp.Factory.build(:tomato)
+%{name: "Tomato-8", color: :blue}
+
+iex> MyApp.Factory.build(:tomato, color: :white)
+%{name: "Tomato-9", color: :white}
+
+iex> MyApp.Factory.build(:tomato, %{color: :pink})
+%{name: "Tomato-10", color: :pink}
 ```
 
-will produce:
+### `insert/2`:
 
 ```elixir
-YourApp.Factory.build(:with_code) # %{code: "CODE-1"}
-YourApp.Factory.build(:with_code) # %{code: "CODE-2"}
-YourApp.Factory.build(:with_code) # %{code: "CODE-3"}
+iex> MyApp.Factory.insert(MyApp.Car)
+{:ok, %MyApp.Car{id: 5, model: "Truck", color: :green}}
+
+iex> MyApp.Factory.insert(MyApp.Car, color: :yellow)
+{:ok, %MyApp.Car{id: 6, model: "Hatch", color: :yellow}}
+
+iex> MyApp.Factory.insert(MyApp.Car, %{color: :purple})
+{:ok, %MyApp.Car{id: 7, model: "Hatch", color: :purple}}
 ```
 
-Note that this `&"CODE-#{&1}"` is a very short Elixir syntax equivalent for:
+### `insert!/2`:
 
 ```elixir
-fn i -> "CODE-#{i}" end
-# is the same as `&"CODE-#{&1}"`
+iex> MyApp.Factory.insert!(MyApp.Car)
+%MyApp.Car{id: 5, model: "Truck", color: :green}
+
+iex> MyApp.Factory.insert!(MyApp.Car, color: :yellow)
+%MyApp.Car{id: 6, model: "Hatch", color: :yellow}
+
+iex> MyApp.Factory.insert!(MyApp.Car, %{color: :purple})
+%MyApp.Car{id: 7, model: "Hatch", color: :purple}
 ```
 
 ## Documentation
