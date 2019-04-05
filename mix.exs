@@ -8,7 +8,11 @@ defmodule MapBot.MixProject do
     [
       app: @app,
       deps: deps(),
-      docs: [main: "readme", extras: ~w(README.md)],
+      docs: [
+        main: "readme",
+        extras: ~w(README.md),
+        javascript_config_path: "../.doc-versions.js"
+      ],
       elixir: "~> 1.7",
       name: @name,
       package: package(),

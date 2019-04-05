@@ -35,6 +35,10 @@ test: setup
 
 docs: ## Generate documentation.
 docs: setup
+	echo "var versionNodes = [" > .doc-versions.js
+	app=`mix run -e 'IO.puts(Mix.Project.config()[:app])'`; \
+	for v in $$(git tag | tail -r); do echo "{version: \"$$v\", url: \"https://hexdocs.pm/$$app/$$v/\"}," >> .doc-versions.js; done
+	echo "]" >> .doc-versions.js
 	mix docs
 
 deploy: ## Deploy into hex.pm
