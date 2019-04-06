@@ -63,28 +63,46 @@ defmodule MapBot do
       iex> MapBot.Sequence.reset(5)
       iex> :rand.seed(:exsplus, {1, 2, 3})
       ...>
-      iex> MyApp.Factory.insert(MyApp.Car)
+      iex> MyApp.FactoryWithRepo.insert(MyApp.Car)
       {:ok, %MyApp.Car{id: 5, model: "Truck", color: :green}}
       ...>
-      iex> MyApp.Factory.insert(MyApp.Car, color: :yellow)
+      iex> MyApp.FactoryWithRepo.insert(MyApp.Car, color: :yellow)
       {:ok, %MyApp.Car{id: 6, model: "Hatch", color: :yellow}}
       ...>
-      iex> MyApp.Factory.insert(MyApp.Car, %{color: :purple})
+      iex> MyApp.FactoryWithRepo.insert(MyApp.Car, %{color: :purple})
       {:ok, %MyApp.Car{id: 7, model: "Hatch", color: :purple}}
+      ...>
+      iex> MyApp.FactoryWithRepoAndChangeset.insert(MyApp.House)
+      {:ok, %MyApp.House{id: 8, style: "Asian", color: :blue}}
+      ...>
+      iex> MyApp.FactoryWithRepoAndChangeset.insert(MyApp.House, color: :yellow)
+      {:ok, %MyApp.House{id: 9, style: "Asian", color: :yellow}}
+      ...>
+      iex> MyApp.FactoryWithRepoAndChangeset.insert(MyApp.House, %{color: :purple})
+      {:ok, %MyApp.House{id: 10, style: "American", color: :purple}}
 
   ### `insert!/2`:
 
       iex> MapBot.Sequence.reset(5)
       iex> :rand.seed(:exsplus, {1, 2, 3})
       ...>
-      iex> MyApp.Factory.insert!(MyApp.Car)
+      iex> MyApp.FactoryWithRepo.insert!(MyApp.Car)
       %MyApp.Car{id: 5, model: "Truck", color: :green}
       ...>
-      iex> MyApp.Factory.insert!(MyApp.Car, color: :yellow)
+      iex> MyApp.FactoryWithRepo.insert!(MyApp.Car, color: :yellow)
       %MyApp.Car{id: 6, model: "Hatch", color: :yellow}
       ...>
-      iex> MyApp.Factory.insert!(MyApp.Car, %{color: :purple})
+      iex> MyApp.FactoryWithRepo.insert!(MyApp.Car, %{color: :purple})
       %MyApp.Car{id: 7, model: "Hatch", color: :purple}
+      ...>
+      iex> MyApp.FactoryWithRepoAndChangeset.insert!(MyApp.House)
+      %MyApp.House{id: 8, style: "Asian", color: :blue}
+      ...>
+      iex> MyApp.FactoryWithRepoAndChangeset.insert!(MyApp.House, color: :yellow)
+      %MyApp.House{id: 9, style: "Asian", color: :yellow}
+      ...>
+      iex> MyApp.FactoryWithRepoAndChangeset.insert!(MyApp.House, %{color: :purple})
+      %MyApp.House{id: 10, style: "American", color: :purple}
   """
 
   @type name :: module() | atom()
@@ -105,18 +123,15 @@ defmodule MapBot do
       @type result :: struct() | map()
 
       if @repo do
-        if @changeset do
-          @spec changeset(name, attributes) :: result
-          def changeset(name, attrs) do
+        @spec changeset(name, attributes) :: result
+        def changeset(name, attrs) do
+          if @changeset do
             new_attrs = attrs(name, attrs)
 
             name
             |> struct()
             |> name.changeset(new_attrs)
-          end
-        else
-          @spec changeset(name, attributes) :: result
-          def changeset(name, attrs) do
+          else
             build(name, attrs)
           end
         end
