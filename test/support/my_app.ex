@@ -18,12 +18,11 @@ defmodule MyApp.Repo do
   def insert!(schema), do: schema
 end
 
-defmodule MyApp.Factory do
+defmodule MyApp.FactoryWithNoRepo do
   @moduledoc false
   use MapBot
 
-  @impl MapBot
-  def new(MyApp.Car) do
+  deffactory(MyApp.Car) do
     %MyApp.Car{
       id: & &1,
       color: color(),
@@ -31,7 +30,7 @@ defmodule MyApp.Factory do
     }
   end
 
-  def new(:tomato) do
+  deffactory(:tomato) do
     %{
       name: &"Tomato-#{&1}",
       color: color()
@@ -45,8 +44,7 @@ defmodule MyApp.FactoryWithRepo do
   @moduledoc false
   use MapBot, repo: MyApp.Repo
 
-  @impl MapBot
-  def new(MyApp.Car) do
+  deffactory(MyApp.Car) do
     %MyApp.Car{
       id: & &1,
       color: color(),
@@ -61,8 +59,7 @@ defmodule MyApp.FactoryWithRepoAndChangeset do
   @moduledoc false
   use MapBot, repo: MyApp.Repo, changeset: true
 
-  @impl MapBot
-  def new(MyApp.House) do
+  deffactory(MyApp.House) do
     %MyApp.House{
       id: & &1,
       color: color(),

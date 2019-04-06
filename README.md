@@ -15,8 +15,7 @@ defmodule MyApp.Factory do
   @moduledoc false
   use MapBot, repo: MyApp.Repo, changeset: true
 
-  @impl MapBot
-  def new(MyApp.Car) do
+  deffactory(MyApp.Car) do
     %MyApp.Car{
       id: & &1,
       color: color(),
@@ -24,7 +23,7 @@ defmodule MyApp.Factory do
     }
   end
 
-  def new(:tomato) do
+  deffactory(:tomato) do
     %{
       name: &"Tomato-#{&1}",
       color: color()

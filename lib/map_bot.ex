@@ -1,6 +1,6 @@
 defmodule MapBot do
   @moduledoc """
-  `MapBot` builds Elixir Maps/Structs based on factory definitions and attributes.
+  `#{__MODULE__}` builds Elixir Maps/Structs based on factory definitions and attributes.
 
   Let's see how to use this library by examples:
 
@@ -14,53 +14,53 @@ defmodule MapBot do
 
   ### `attrs/2`:
 
-      iex> MapBot.Sequence.reset(5)
+      iex> #{__MODULE__}.Sequence.reset(5)
       iex> :rand.seed(:exsplus, {1, 2, 3})
       ...>
-      iex> MyApp.Factory.attrs(MyApp.Car)
+      iex> MyApp.FactoryWithNoRepo.attrs(MyApp.Car)
       %{id: 5, model: "Truck", color: :green}
       ...>
-      iex> MyApp.Factory.attrs(MyApp.Car, color: :yellow)
+      iex> MyApp.FactoryWithNoRepo.attrs(MyApp.Car, color: :yellow)
       %{id: 6, model: "Hatch", color: :yellow}
       ...>
-      iex> MyApp.Factory.attrs(MyApp.Car, %{color: :purple})
+      iex> MyApp.FactoryWithNoRepo.attrs(MyApp.Car, %{color: :purple})
       %{id: 7, model: "Hatch", color: :purple}
       ...>
-      iex> MyApp.Factory.attrs(:tomato)
+      iex> MyApp.FactoryWithNoRepo.attrs(:tomato)
       %{name: "Tomato-8", color: :blue}
       ...>
-      iex> MyApp.Factory.attrs(:tomato, color: :white)
+      iex> MyApp.FactoryWithNoRepo.attrs(:tomato, color: :white)
       %{name: "Tomato-9", color: :white}
       ...>
-      iex> MyApp.Factory.attrs(:tomato, %{color: :pink})
+      iex> MyApp.FactoryWithNoRepo.attrs(:tomato, %{color: :pink})
       %{name: "Tomato-10", color: :pink}
 
   ### `build/2`:
 
-      iex> MapBot.Sequence.reset(5)
+      iex> #{__MODULE__}.Sequence.reset(5)
       iex> :rand.seed(:exsplus, {1, 2, 3})
       ...>
-      iex> MyApp.Factory.build(MyApp.Car)
+      iex> MyApp.FactoryWithNoRepo.build(MyApp.Car)
       %MyApp.Car{id: 5, model: "Truck", color: :green}
       ...>
-      iex> MyApp.Factory.build(MyApp.Car, color: :yellow)
+      iex> MyApp.FactoryWithNoRepo.build(MyApp.Car, color: :yellow)
       %MyApp.Car{id: 6, model: "Hatch", color: :yellow}
       ...>
-      iex> MyApp.Factory.build(MyApp.Car, %{color: :purple})
+      iex> MyApp.FactoryWithNoRepo.build(MyApp.Car, %{color: :purple})
       %MyApp.Car{id: 7, model: "Hatch", color: :purple}
       ...>
-      iex> MyApp.Factory.build(:tomato)
+      iex> MyApp.FactoryWithNoRepo.build(:tomato)
       %{name: "Tomato-8", color: :blue}
       ...>
-      iex> MyApp.Factory.build(:tomato, color: :white)
+      iex> MyApp.FactoryWithNoRepo.build(:tomato, color: :white)
       %{name: "Tomato-9", color: :white}
       ...>
-      iex> MyApp.Factory.build(:tomato, %{color: :pink})
+      iex> MyApp.FactoryWithNoRepo.build(:tomato, %{color: :pink})
       %{name: "Tomato-10", color: :pink}
 
   ### `insert/2`:
 
-      iex> MapBot.Sequence.reset(5)
+      iex> #{__MODULE__}.Sequence.reset(5)
       iex> :rand.seed(:exsplus, {1, 2, 3})
       ...>
       iex> MyApp.FactoryWithRepo.insert(MyApp.Car)
@@ -83,7 +83,7 @@ defmodule MapBot do
 
   ### `insert!/2`:
 
-      iex> MapBot.Sequence.reset(5)
+      iex> #{__MODULE__}.Sequence.reset(5)
       iex> :rand.seed(:exsplus, {1, 2, 3})
       ...>
       iex> MyApp.FactoryWithRepo.insert!(MyApp.Car)
@@ -106,48 +106,53 @@ defmodule MapBot do
   """
 
   @type name :: module() | atom()
-  @type result :: struct() | map()
+  @type use_option :: {:repo, module} | {:changeset, boolean}
 
-  @callback new(name) :: result
+  @doc """
+  Macro that defines a factory for the `name` argument.
+  """
+  @spec deffactory(atom, do: any) :: any
+  defmacro deffactory(name, do: block) do
+    quote do
+      defp new(unquote(name)), do: unquote(block)
+    end
+  end
 
+  @doc """
+  Use `__MODULE__` with the following options:
+
+  - `:repo` => Repository module to delegate calls on `insert/1` and `insert!/1`
+  - `:changeset` => If `true` a `changeset/2` function will be called when inserting into the Repo
+
+  ## Examples
+
+      iex> MyApp.FactoryWithNoRepo.__info__(:functions)
+      [attrs: 1, attrs: 2, build: 1, build: 2]
+
+      iex> MyApp.FactoryWithRepo.__info__(:functions)
+      [attrs: 1, attrs: 2, build: 1, build: 2, insert: 1, insert: 2, insert!: 1, insert!: 2]
+
+      iex> MyApp.FactoryWithRepoAndChangeset.__info__(:functions)
+      [attrs: 1, attrs: 2, build: 1, build: 2, insert: 1, insert: 2, insert!: 1, insert!: 2, validate: 2]
+
+  """
+  @spec __using__([use_option]) :: any
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
-      @behaviour MapBot
+      import MapBot, only: [deffactory: 2]
 
       @repo Keyword.get(opts, :repo)
       @changeset Keyword.get(opts, :changeset, false)
 
-      @type factory :: module()
       @type name :: module() | atom()
       @type attributes :: map() | keyword()
       @type result :: struct() | map()
 
-      if @repo do
-        @spec changeset(name, attributes) :: result
-        def changeset(name, attrs) do
-          if @changeset do
-            new_attrs = attrs(name, attrs)
-
-            name
-            |> struct()
-            |> name.changeset(new_attrs)
-          else
-            build(name, attrs)
-          end
-        end
-
-        @spec insert(name, attributes) :: {:ok, result}
-        def insert(name, attrs \\ []) do
-          name
-          |> changeset(attrs)
-          |> @repo.insert()
-        end
-
-        @spec insert!(name, attributes) :: result
-        def insert!(name, attrs \\ []) do
-          name
-          |> changeset(attrs)
-          |> @repo.insert!()
+      @spec attrs(name, attributes) :: map
+      def attrs(name, attrs \\ []) do
+        case build(name, attrs) do
+          %_{} = struct -> Map.from_struct(struct)
+          map -> map
         end
       end
 
@@ -161,11 +166,36 @@ defmodule MapBot do
         |> MapBot.Sequence.apply()
       end
 
-      @spec attrs(name, attributes) :: map
-      def attrs(name, attrs \\ []) do
-        case build(name, attrs) do
-          %_{} = struct -> Map.from_struct(struct)
-          map -> map
+      if @repo do
+        @spec insert(name, attributes) :: {:ok, result}
+        def insert(name, attrs \\ []) do
+          name
+          |> build_maybe_validate(attrs)
+          |> @repo.insert()
+        end
+
+        @spec insert!(name, attributes) :: result
+        def insert!(name, attrs \\ []) do
+          name
+          |> build_maybe_validate(attrs)
+          |> @repo.insert!()
+        end
+
+        if @changeset do
+          defp build_maybe_validate(name, attrs) do
+            new_attrs = attrs(name, attrs)
+            validate(name, new_attrs)
+          end
+
+          def validate(name, attrs) do
+            name
+            |> struct()
+            |> name.changeset(attrs)
+          end
+        else
+          defp build_maybe_validate(name, attrs) do
+            build(name, attrs)
+          end
         end
       end
     end
