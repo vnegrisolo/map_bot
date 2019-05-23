@@ -117,7 +117,7 @@ Check out `map_bot` version on [hex.pm/map_bot][hex-pm-map_bot]. The package can
 ```elixir
 def deps do
   [
-    {:map_bot, "~> 1.3.0"}
+    {:map_bot, "~> 1.3.1"}
   ]
 end
 ```
