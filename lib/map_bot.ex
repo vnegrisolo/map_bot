@@ -7,7 +7,7 @@ defmodule MapBot do
   ## Examples setup:
 
   ```elixir
-  #{File.read!("test/support/my_app.ex")}
+  #{:map_bot |> :code.priv_dir() |> Path.join("support/my_app.ex") |> File.read!()}
   ```
 
   ## Examples
