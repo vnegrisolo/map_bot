@@ -10,8 +10,7 @@ defmodule MapBot.MixProject do
       deps: deps(),
       docs: [
         main: "readme",
-        extras: ~w(README.md),
-        javascript_config_path: "../.doc-versions.js"
+        extras: ~w(README.md)
       ],
       elixir: "~> 1.7",
       name: @name,
