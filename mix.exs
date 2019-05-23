@@ -17,7 +17,7 @@ defmodule MapBot.MixProject do
       package: package(),
       source_url: "https://github.com/vnegrisolo/#{@app}",
       start_permanent: Mix.env() == :prod,
-      version: "1.3.1"
+      version: "1.3.2"
     ]
   end
 
