@@ -105,13 +105,13 @@ defmodule MapBot do
       %MyApp.House{id: 10, style: "American", color: :purple}
   """
 
-  @type name :: module() | atom()
-  @type use_option :: {:repo, module} | {:changeset, boolean}
+  @type map_bot_name :: module() | atom()
+  @type map_bot_use_option :: {:repo, module} | {:changeset, boolean}
 
   @doc """
   Macro that defines a factory for the `name` argument.
   """
-  @spec deffactory(atom, do: any) :: any
+  @spec deffactory(map_bot_name, do: any) :: any
   defmacro deffactory(name, do: block) do
     quote do
       defp new(unquote(name)), do: unquote(block)
@@ -136,19 +136,19 @@ defmodule MapBot do
       [attrs: 1, attrs: 2, build: 1, build: 2, insert: 1, insert: 2, insert!: 1, insert!: 2, validate: 2]
 
   """
-  @spec __using__([use_option]) :: any
+  @spec __using__([map_bot_use_option]) :: any
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
       import MapBot, only: [deffactory: 2]
 
-      @repo Keyword.get(opts, :repo)
-      @changeset Keyword.get(opts, :changeset, false)
+      @map_bot_repo Keyword.get(opts, :repo)
+      @map_bot_changeset Keyword.get(opts, :changeset, false)
 
-      @type name :: module() | atom()
-      @type attributes :: map() | keyword()
-      @type result :: struct() | map()
+      @type map_bot_name :: module() | atom()
+      @type map_bot_attributes :: map() | keyword()
+      @type map_bot_result :: struct() | map()
 
-      @spec attrs(name, attributes) :: map
+      @spec attrs(map_bot_name, map_bot_attributes) :: map
       def attrs(name, attrs \\ []) do
         case build(name, attrs) do
           %_{} = struct -> Map.from_struct(struct)
@@ -156,7 +156,7 @@ defmodule MapBot do
         end
       end
 
-      @spec build(name, attributes) :: result
+      @spec build(map_bot_name, map_bot_attributes) :: map_bot_result
       def build(name, attrs \\ []) do
         attrs = Map.new(attrs)
 
@@ -166,22 +166,22 @@ defmodule MapBot do
         |> MapBot.Sequence.apply()
       end
 
-      if @repo do
-        @spec insert(name, attributes) :: {:ok, result}
+      if @map_bot_repo do
+        @spec insert(map_bot_name, map_bot_attributes) :: {:ok, map_bot_result}
         def insert(name, attrs \\ []) do
           name
           |> build_maybe_validate(attrs)
-          |> @repo.insert()
+          |> @map_bot_repo.insert()
         end
 
-        @spec insert!(name, attributes) :: result
+        @spec insert!(map_bot_name, map_bot_attributes) :: map_bot_result
         def insert!(name, attrs \\ []) do
           name
           |> build_maybe_validate(attrs)
-          |> @repo.insert!()
+          |> @map_bot_repo.insert!()
         end
 
-        if @changeset do
+        if @map_bot_changeset do
           defp build_maybe_validate(name, attrs) do
             new_attrs = attrs(name, attrs)
             validate(name, new_attrs)
