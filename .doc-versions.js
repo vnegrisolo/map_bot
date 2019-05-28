@@ -1,4 +1,5 @@
 var versionNodes = [
+  { version: "1.3.2", url: "https://hexdocs.pm/map_bot/1.3.2/" },
   { version: "1.3.1", url: "https://hexdocs.pm/map_bot/1.3.1/" },
   { version: "1.3.0", url: "https://hexdocs.pm/map_bot/1.3.0/" },
   { version: "1.2.0", url: "https://hexdocs.pm/map_bot/1.2.0/" },
