@@ -29,7 +29,7 @@ defmodule MapBot.MixProject do
   defp deps do
     [
       {:credo, "~> 1.2.0", only: :test},
-      {:dialyxir, "~> 0.5.1", only: :test},
+      {:dialyxir, "~> 1.0.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
